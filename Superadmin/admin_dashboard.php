@@ -1,17 +1,16 @@
 <?php
-// session_start();
+session_start();
 
-// // Periksa apakah user sudah login
-// if (!isset($_SESSION['username']) || $_SESSION['role_user'] !== 'superadmin') {
-//     header("Location: ../Views/login.php");
-//     exit();
-// }
+// Periksa apakah user sudah login
+if (!isset($_SESSION['username']) || $_SESSION['role_user'] !== 'superadmin') {
+    header("Location: ../Views/login.php");
+    exit();
+}
 
 // Ambil username dari session
 $username = $_SESSION['username'] ?? 'Pengguna';
 $nama = $_SESSION['nama'] ?? 'Pengguna';
 $role_user = $_SESSION['role_user'] ?? 'Tidak diketahui';
-
 
 ?>
 <html>
@@ -279,16 +278,16 @@ $role_user = $_SESSION['role_user'] ?? 'Tidak diketahui';
    </div>
   </div>
   <div class="sidebar">
-   <a class="menu-item active" href="index.php?controller=superAdmin&action=dashboard">
+   <a class="menu-item active" href="http://localhost/Sistem-Informasi-Bebas-Tanggungan-Tugas-Akhir/app/Controllers/SuperAdminController.php?action=dashboard">
     <i class="bi bi-house"></i>
     Beranda
    </a>
-   <a class="menu-item" href="index.php?controller=superAdmin&action=manageUser">
+   <a class="menu-item" href="http://localhost/Sistem-Informasi-Bebas-Tanggungan-Tugas-Akhir/app/Controllers/SuperAdminController.php?action=manageUsers">
     <i class="fas fa-users"></i>
     </i>
     Manajemen Pengguna
    </a>
-   <a class="menu-item" href="index.php?controller=superAdmin&action=manageDocument">
+   <a class="menu-item" href="http://localhost/Sistem-Informasi-Bebas-Tanggungan-Tugas-Akhir/app/Controllers/SuperAdminController.php?action=manageUsers">
     <i class="fas fa-folder"></i>
     Manajemen Dokumen
    </a>
@@ -329,7 +328,7 @@ $role_user = $_SESSION['role_user'] ?? 'Tidak diketahui';
         <thead>
             <tr>
                 <th>Nama Mahasiswa</th>
-                <th>Tanggal Verifikasi</th>
+                <th>Tanggal Upload</th>
                 <th>Status</th>
                 <th>Nama Dokumen</th>
             </tr>
@@ -339,9 +338,9 @@ $role_user = $_SESSION['role_user'] ?? 'Tidak diketahui';
                         <?php foreach ($documents as $doc): ?>
                             <tr>
                                 <td><?= htmlspecialchars($doc['nama_mahasiswa']); ?></td>
-                                <td><?= htmlspecialchars($doc['tgl_verifikasi']); ?></td>
+                                <td><?= htmlspecialchars($doc['tgl_upload']); ?></td>
                                 <td>
-                                    <span class="status <?= $doc['status_verifikasi'] === 'Disetujui' ? 'status-approved' : 'status-rejected'; ?>">
+                                    <span class="status <?= $doc['status_verifikasi'] === 'Sudah Diunggah' ? 'status-approved' : 'status-rejected'; ?>">
                                         <?= htmlspecialchars($doc['status_verifikasi']); ?>
                                     </span>
                                 </td>

@@ -5,13 +5,8 @@ require_once __DIR__ . '/../../config/database.php';
 class SuperAdminModel {
     private $conn;
 
-    public function __construct($host, $db, $user, $pass) {
-        try {
-            $this->conn = new PDO("sqlsrv:Server=$host;Database=$db", $user, $pass);
-            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $e) {
-            die("Connection failed: " . $e->getMessage());
-        }
+    public function __construct($dbConnection) {
+        $this->conn = $dbConnection;
     }
 
     public function getMahasiswaCount() {
@@ -19,6 +14,7 @@ class SuperAdminModel {
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
     }
+    
 
     public function getVerifikatorCount() {
         $stmt = $this->conn->prepare("SELECT COUNT(*) as total FROM [User] WHERE role_user IN ('admin jurusan', 'admin pusat')");
@@ -59,6 +55,7 @@ JOIN
             SELECT 
                 m.nim, 
                 u.nama AS nama_mahasiswa, 
+                u.password AS password, 
                 p.role_prodi AS prodi,
                 j.role_jurusan AS jurusan, 
                 a.role_angkatan AS angkatan, 
@@ -75,25 +72,45 @@ JOIN
     }
 
     // Fungsi untuk menambah mahasiswa
-    public function addMahasiswa($nim, $prodi, $jurusan, $angkatan, $kelas, $nama, $no_telp) {
-        $stmt = $this->conn->prepare("
-            INSERT INTO Mahasiswa (nim, id_prodi, id_jurusan, id_angkatan, kelas, id_user) 
-            VALUES (:nim, 
-                    (SELECT id_prodi FROM Prodi WHERE role_prodi = :prodi), 
-                    (SELECT id_jurusan FROM Jurusan WHERE role_jurusan = :jurusan),
-                    (SELECT id_angkatan FROM Angkatan WHERE role_angkatan = :angkatan),
-                    :kelas, 
-                    (SELECT id_user FROM [User] WHERE nama = :nama AND no_telp = :no_telp))
-        ");
-        $stmt->bindParam(':nim', $nim);
-        $stmt->bindParam(':prodi', $prodi);
-        $stmt->bindParam(':jurusan', $jurusan);
-        $stmt->bindParam(':angkatan', $angkatan);
-        $stmt->bindParam(':kelas', $kelas);
-        $stmt->bindParam(':nama', $nama);
-        $stmt->bindParam(':no_telp', $no_telp);
-        $stmt->execute();
+    public function addMahasiswa($nim, $nama, $password, $no_telp, $email, $kelas, $id_prodi, $id_jurusan, $id_angkatan)
+    {
+        try {
+            // Tambah data ke tabel User
+            $stmtUser = $this->conn->prepare("
+                INSERT INTO [User] (role_user, username, password, nama, no_telp, email)
+                VALUES ('mahasiswa', :username, :password, :nama, :no_telp, :email)
+            ");
+            $stmtUser->execute([
+                ':username' => $nim, // Username sama dengan NIM
+                ':password' => $password, 
+                ':nama' => $nama,
+                ':no_telp' => $no_telp,
+                ':email' => $email
+            ]);
+    
+            // Ambil ID User yang baru saja dimasukkan
+            $id_user = $this->conn->lastInsertId();
+    
+            // Tambah data ke tabel Mahasiswa
+            $stmtMahasiswa = $this->conn->prepare("
+                INSERT INTO Mahasiswa (nim, id_user, kelas, id_prodi, id_jurusan, id_angkatan)
+                VALUES (:nim, :id_user, :kelas, :id_prodi, :id_jurusan, :id_angkatan)
+            ");
+            $stmtMahasiswa->execute([
+                ':nim' => $nim,
+                ':id_user' => $id_user,
+                ':kelas' => $kelas,
+                ':id_prodi' => $id_prodi,
+                ':id_jurusan' => $id_jurusan,
+                ':id_angkatan' => $id_angkatan
+            ]);
+    
+            return true;
+        } catch (Exception $e) {
+            throw new Exception("Gagal menambahkan mahasiswa: " . $e->getMessage());
+        }
     }
+    
 
     // Fungsi untuk mengedit data mahasiswa
 public function editMahasiswa($id_mahasiswa, $nim, $prodi, $jurusan, $angkatan, $kelas, $nama, $no_telp) {
@@ -123,10 +140,33 @@ public function editMahasiswa($id_mahasiswa, $nim, $prodi, $jurusan, $angkatan, 
 }
 
     // Fungsi untuk menghapus mahasiswa
-    public function deleteMahasiswa($id_mahasiswa) {
-        $stmt = $this->conn->prepare("DELETE FROM Mahasiswa WHERE id_mahasiswa = :id_mahasiswa");
-        $stmt->bindParam(':id_mahasiswa', $id_mahasiswa);
+    public function deleteMahasiswa($nim) {
+        $stmt = $this->conn->prepare("DELETE FROM Mahasiswa WHERE nim = :nim");
+        $stmt->bindParam(':nim', $nim);
         $stmt->execute();
     }
 
+    // Ambil semua data Prodi
+    public function getAllProdi()
+    {
+        $stmt = $this->conn->prepare("SELECT id_prodi, role_prodi FROM Prodi");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Ambil semua data Jurusan
+    public function getAllJurusan()
+    {
+        $stmt = $this->conn->prepare("SELECT id_jurusan, role_jurusan FROM Jurusan");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Ambil semua data Angkatan
+    public function getAllAngkatan()
+    {
+        $stmt = $this->conn->prepare("SELECT id_angkatan, role_angkatan FROM Angkatan");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

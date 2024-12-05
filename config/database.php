@@ -1,24 +1,20 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
 class Database {
-    private $host = "DESKTOP-4GTLV9D";  // Host database
-    private $db = "BebasTanggunganTA3"; // Nama database
-    private $user = "sa";              // Username database
-    private $password = "123";         // Password database
-    public $conn;
+    private static $host = 'DESKTOP-PKL1H9B'; // Host database
+    private static $dbName = 'BebasTanggunganTA3'; // Nama database
+    private static $username = 'sa'; // Username database
+    private static $password = '12345'; // Password database
+    private static $pdo;
 
-    public function connect() {
-        $this->conn = null;
-        try {
-            // Koneksi ke database
-            $this->conn = new PDO("sqlsrv:server=$this->host;Database=$this->db", $this->user, $this->password);
-            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $e) {
-            // Menampilkan pesan error jika koneksi gagal
-            echo "<div style='background-color: #f8d7da; color: #721c24; padding: 10px; border: 1px solid #f5c6cb; margin: 10px 0;'>Kesalahan koneksi: <strong>" . $e->getMessage() . "</strong></div>";
+    public static function connect() {
+        if (!self::$pdo) {
+            try {
+                self::$pdo = new PDO("sqlsrv:Server=" . self::$host . ";Database=" . self::$dbName, self::$username, self::$password);
+                self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            } catch (PDOException $e) {
+                die("Database connection failed: " . $e->getMessage());
+            }
         }
-        return $this->conn;
+        return self::$pdo;
     }
 }

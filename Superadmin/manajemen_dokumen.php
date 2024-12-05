@@ -1,19 +1,3 @@
-<?php
-// session_start();
-
-// // Periksa apakah user sudah login
-// if (!isset($_SESSION['username']) || $_SESSION['role_user'] !== 'superadmin') {
-//     header("Location: ../Views/login.php");
-//     exit();
-// }
-
-// Ambil username dari session
-$username = $_SESSION['username'] ?? 'Pengguna';
-$nama = $_SESSION['nama'] ?? 'Pengguna';
-$role_user = $_SESSION['role_user'] ?? 'Tidak diketahui';
-
-
-?>
 <html>
  <head>
   <title>
@@ -54,11 +38,11 @@ $role_user = $_SESSION['role_user'] ?? 'Tidak diketahui';
             margin-right: 10px;
             cursor: pointer;
             font-size: 16px;
-            font-weight: 700; 
+            font-weight: 700; /* Inter Bold */
         }
         .header .title {
             font-size: 14px;
-            font-weight: 700; 
+            font-weight: 700; /* Inter Bold */
             margin-left: 10px;
         }
         .header .user-info {
@@ -78,10 +62,10 @@ $role_user = $_SESSION['role_user'] ?? 'Tidak diketahui';
         }
 
         .header .user-info .name div:first-child {
-            font-weight: 700; 
+            font-weight: 700; /* Inter Bold */
         }
         .header .user-info .name div:last-child {
-            font-weight: 400; 
+            font-weight: 400; /* Inter Regular */
         }
         .sidebar {
             height: 100vh;
@@ -134,87 +118,60 @@ $role_user = $_SESSION['role_user'] ?? 'Tidak diketahui';
             padding-top: 70px;
         }
         .content .welcome {
-            background-color: #1E1E1E;
+            background-color: #1E1E1E;;
             color: #fff;
             padding: 20px;
-            border-radius: 0px 0px 20px 20px;
+            border-radius: 0px 0px 20px 20px;;
             margin-bottom: 20px;
-            height: 189px;
+            height: 110px;
             width: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
         }
         .content .welcome h1 {
-            margin-left: 30px;
-            font-size: 40px;
-            font-weight: 700;
-            font-family: 'Inter', sans-serif;
+            margin: 10px;
+            font-size: 30px;
+            font-style: bold;
         }
-        .content .welcome p {
-            margin-left: 30px;
-            font-size: 16px;
-            font-style: medium;
-        }
-        .content .cards {
-            display: flex;
-            gap: 22px;
-            margin-bottom: 20px;
-            margin: 32px 50px;
-            
-        }
-        .content .card {
-            background-color: #FFAF01;
-            width: 507px;
-            height: 170px;
-            padding: 20px;
-            border-radius: 10px;
-            flex: 1;
-            text-align: center;
-            box-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.25);
-        }
-        .content .card h2 {
-            margin: 0;
-            font-size: 36px;
-        }
-        .content .card p {
-            margin: 10px 0 0;
-            font-size: 16px;
-        }
-        .summary {
-            margin: 32px 50px;
+        .table-container {
+            margin: 20px 50px;
             background-color: #fff;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.25);
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
         }
-        .summary h3 {
-            margin-bottom: 15px;
-            font-size: 20px;
-            font-weight: 700;
-            color: #333;
+        .table-header {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            margin-bottom: 20px;
         }
-        .summary-table {
+        .table-header h2 {
+            margin: 0; 
+            font-size: 1.5rem; 
+            color: #333; 
+        }
+        .table-header .btn {
+            margin-top: 10px; 
+        }
+        .user-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 14px;
             text-align: left;
         }
-        .summary-table th,
-        .summary-table td {
+        .user-table th,
+        .user-table td {
             padding: 10px 15px;
             border: 1px solid #ddd;
         }
-        .summary-table th {
+        .user-table th {
             background-color: #f7f7f7;
             font-weight: 700;
-            text-transform: uppercase;
             color: #555;
         }
-        .summary-table tr:nth-child(even) {
+        .user-table tr:nth-child(even) {
             background-color: #f9f9f9;
         }
-        .summary-table .status {
+        .user-table .status {
             padding: 5px 10px;
             border-radius: 5px;
             font-size: 12px;
@@ -222,11 +179,22 @@ $role_user = $_SESSION['role_user'] ?? 'Tidak diketahui';
             display: inline-block;
             text-align: center;
         }
-        .summary-table .status-approved {
+        .user-table .status-approved {
             background-color: #28a745;
         }
-        .summary-table .status-rejected {
+        .modal-header {
+            font-weight: bold;
+        }
+        .modal-hapus .modal-header {
             background-color: #dc3545;
+            color: white;
+        }
+        .modal-footer .btn {
+            padding: 10px 15px;
+        }
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
         }
         .footer {
             text-align: center;
@@ -270,25 +238,25 @@ $role_user = $_SESSION['role_user'] ?? 'Tidak diketahui';
     <img alt="User profile picture" height="40" src="https://storage.googleapis.com/a1aa/image/AW0PXsLkpnZ8DNB4clVvuVaJnwXJMkA3KDoEGtUoITZtlc9E.jpg" width="40"/>
     <div class="name">
      <div>
-     <?= htmlspecialchars($nama); ?> <!-- Nama diambil dari session -->
+      Dimas Prayoga
      </div>
      <div class="role">
-     <?= htmlspecialchars($role_user); ?> <!-- Role diambil dari session -->
+      Admin
      </div>
     </div>
    </div>
   </div>
   <div class="sidebar">
-   <a class="menu-item active" href="index.php?controller=superAdmin&action=dashboard">
+   <a class="menu-item" href="http://localhost/Sistem-Informasi-Bebas-Tanggungan-Tugas-Akhir/app/Controllers/SuperAdminController.php?action=dashboard">
     <i class="bi bi-house"></i>
     Beranda
    </a>
-   <a class="menu-item" href="index.php?controller=superAdmin&action=manageUser">
+   <a class="menu-item" href="http://localhost/Sistem-Informasi-Bebas-Tanggungan-Tugas-Akhir/app/Controllers/SuperAdminController.php?action=manageUsers">
     <i class="fas fa-users"></i>
     </i>
     Manajemen Pengguna
    </a>
-   <a class="menu-item" href="index.php?controller=superAdmin&action=manageDocument">
+   <a class="menu-item active" href="http://localhost/Sistem-Informasi-Bebas-Tanggungan-Tugas-Akhir/app/Controllers/SuperAdminController.php?action=manageUsers">
     <i class="fas fa-folder"></i>
     Manajemen Dokumen
    </a>
@@ -298,61 +266,55 @@ $role_user = $_SESSION['role_user'] ?? 'Tidak diketahui';
    </a>
   </div>
   <div class="content">
-   <div class="welcome">
-    <h1>
-    <h1>Selamat Datang, <?= htmlspecialchars($username); ?></h1>
-    </h1>
-    <p>
-     Anda berada di halaman admin
-    </p>
-   </div>
-   <div class="cards">
-    <div class="card">
-        <h3>Data Mahasiswa</h3>
-        <h2><?= htmlspecialchars($mahasiswaCount ?? 0); ?></h2>
-        <p>Data Mahasiswa Saat Ini</p>
+    <div class="welcome">
+        <h1>Manajemen Dokumen</h1>
     </div>
-    <div class="card">
-        <h3>Data Verifikator</h3>
-        <h2><?= htmlspecialchars($verifikatorCount ?? 0); ?></h2>
-        <p>Data Verifikator Saat Ini</p>
-    </div>
-    <div class="card">
-        <h3>Data Admin</h3>
-        <h2><?= htmlspecialchars($adminCount ?? 0); ?></h2>
-        <p>Data Admin Saat Ini</p>
+    <div class="table-container">
+        <div class="table-header">
+            <h2>Data Riwayat Mahasiswa</h2>
+        </div>
+        <table class="user-table">
+            <thead>
+                <tr>
+                    <th>Nama Mahasiswa</th>
+                    <th>Tanggal Unggah</th>
+                    <th>Status</th>
+                    <th>Nama Dokumen</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Lelyta Meyda Ayu Budiyanti</td>
+                    <td>20 Nov 2024</td>
+                    <td><span class="status status-approved">Disetujui</span></td>
+                    <td>Laporan Tugas Akhir/Skripsi</td>
+                    <td>
+                        <button class="btn btn-delete" data-toggle="modal" data-target="#modalHapus">Hapus</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
-<div class="summary">
-    <h3>Ringkasan Manajemen Dokumen</h3>
-    <table class="summary-table">
-        <thead>
-            <tr>
-                <th>Nama Mahasiswa</th>
-                <th>Tanggal Verifikasi</th>
-                <th>Status</th>
-                <th>Nama Dokumen</th>
-            </tr>
-        </thead>
-        <tbody>
-        <?php if (!empty($documents)): ?>
-                        <?php foreach ($documents as $doc): ?>
-                            <tr>
-                                <td><?= htmlspecialchars($doc['nama_mahasiswa']); ?></td>
-                                <td><?= htmlspecialchars($doc['tgl_verifikasi']); ?></td>
-                                <td>
-                                    <span class="status <?= $doc['status_verifikasi'] === 'Disetujui' ? 'status-approved' : 'status-rejected'; ?>">
-                                        <?= htmlspecialchars($doc['status_verifikasi']); ?>
-                                    </span>
-                                </td>
-                                <td><?= htmlspecialchars($doc['nama_dokumen']); ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr><td colspan="4">Tidak ada data dokumen</td></tr>
-                    <?php endif; ?>
-        </tbody>
-    </table>
+<!-- Modal Hapus -->
+<div class="modal fade modal-hapus" id="modalHapus" tabindex="-1" aria-labelledby="modalHapusLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalHapusLabel">Hapus Data Riwayat Mahasiswa</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Apakah Anda yakin ingin menghapus data riwayat mahasiswa ini?</p>
+                <p><strong>Nama:</strong> <span id="hapusNama">Lelyta Meyda Ayu Budiyanti</span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                <button type="button" class="btn btn-danger" id="confirmHapus">Hapus</button>
+            </div>
+        </div>
+    </div>
 </div>
   <div class="footer">
    ©2024 Jurusan Teknologi Informasi
@@ -375,5 +337,7 @@ $role_user = $_SESSION['role_user'] ?? 'Tidak diketahui';
             }
         });
   </script>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
  </body>
 </html>
