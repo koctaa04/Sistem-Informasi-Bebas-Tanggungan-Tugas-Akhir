@@ -416,18 +416,117 @@ $role_user = $_SESSION['role_user'] ?? 'Tidak diketahui';
                         <td><?= $mahasiswa['kelas'] ?></td>
                         <td><?= $mahasiswa['no_telp'] ?></td>
                         <td>
-                            <button class="btn btn-edit" onclick="window.location.href='?action=editMahasiswa&nim=<?= $mahasiswa['nim'] ?>'">Edit</button>
-                            <button class="btn btn-delete"
-                                onclick="if(confirm('Hapus data ini?')) { window.location.href = 'index.php?controller=superAdmin&action=deleteMahasiswa&nim=<?= urlencode($mahasiswa['nim']) ?>'; } return false;">
-                                Hapus
+                            <button class="btn btn-edit"
+                                data-toggle="modal"
+                                data-target="#modalEdit<?= $mahasiswa['nim'] ?>">
+                                Edit
                             </button>
+                            <!-- Modal Edit -->
+                            <div class="modal fade modal-edit" id="modalEdit<?= $mahasiswa['nim'] ?>" tabindex="-1" aria-labelledby="modalEditLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="modalEditLabel">Edit Data Mahasiswa</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="index.php?controller=superAdmin&action=editMahasiswa" method="POST">
+                                                <div class="form-group">
+                                                    <label for="editNim">NIM</label>
+                                                    <input type="text" class="form-control" id="editNim" name="nim" value="<?= $mahasiswa['nim'] ?>" required readonly>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="editPassword">password</label>
+                                                    <input name="password" type="text" class="form-control" id="editPassword" value="<?= $mahasiswa['password'] ?>" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="editNama">Nama Mahasiswa</label>
+                                                    <input type="text" class="form-control" id="editNama" name="nama" value="<?= $mahasiswa['nama_mahasiswa'] ?>" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="email">Email</label>
+                                                    <input name="email" type="email" class="form-control" id="email" value="<?= $mahasiswa['email'] ?>" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="editKelas">Kelas</label>
+                                                    <input type="text" class="form-control" id="editKelas" name="kelas" value="<?= $mahasiswa['kelas'] ?>" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="editNo_Telp">No.Telepon</label>
+                                                    <input type="text" class="form-control" id="editNo_Telp" name="no_telp" value="<?= $mahasiswa['no_telp'] ?>" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="editProdi">Prodi</label>
+                                                    <select class="form-control" id="editProdi" name="id_prodi" required>
+                                                        <option value="" disabled selected>Pilih Prodi</option>
+                                                        <?php foreach ($prodiList as $prodi): ?>
+                                                            <option value="<?= $prodi['id_prodi'] ?>" <?= $mahasiswa['id_prodi'] == $prodi['id_prodi'] ? 'selected' : '' ?>>
+                                                                <?= $prodi['role_prodi'] ?>
+                                                            </option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="editJurusan">Jurusan</label>
+                                                    <select class="form-control" id="editJurusan" name="id_jurusan" required>
+                                                        <option value="" disabled selected>Pilih Jurusan</option>
+                                                        <?php foreach ($jurusanList as $jurusan): ?>
+                                                            <option value="<?= $jurusan['id_jurusan'] ?>" <?= $mahasiswa['id_jurusan'] == $jurusan['id_jurusan'] ? 'selected' : '' ?>>
+                                                                <?= $jurusan['role_jurusan'] ?>
+                                                            </option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="editAngkatan">Angkatan</label>
+                                                    <select class="form-control" id="editAngkatan" name="id_angkatan" required>
+                                                        <option value="" disabled selected>Pilih Angkatan</option>
+                                                        <?php foreach ($angkatanList as $angkatan): ?>
+                                                            <option value="<?= $angkatan['id_angkatan'] ?>" <?= $mahasiswa['id_angkatan'] == $angkatan['id_angkatan'] ? 'selected' : '' ?>>
+                                                                <?= $angkatan['role_angkatan'] ?>
+                                                            </option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                </div>
+
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                                                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <button class="btn btn-delete"
                                 data-toggle="modal"
-                                data-target="#modalHapus"
-                                data-nim="<?= htmlspecialchars($mahasiswa['nim']) ?>"
-                                data-nama="<?= htmlspecialchars($mahasiswa['nama_mahasiswa']) ?>">
+                                data-target="#modalHapus<?= $mahasiswa['nim'] ?>">
                                 Hapus
                             </button>
+                            <!-- Modal Hapus -->
+                            <div class="modal fade modal-hapus" id="modalHapus<?= $mahasiswa['nim'] ?>" tabindex="-1" aria-labelledby="modalHapusLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="modalHapusLabel">Hapus Data Mahasiswa</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Apakah Anda yakin ingin menghapus data mahasiswa ini?</p>
+                                            <p><strong>NIM:</strong> <span id="hapusNim"><?= $mahasiswa['nim'] ?></span></p>
+                                            <p><strong>Nama:</strong> <span id="hapusNama"><?= $mahasiswa['nama_mahasiswa'] ?></span></p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                                            <!-- Pastikan URL ini memuat parameter nim -->
+                                            <a href="index.php?controller=superAdmin&action=deleteMahasiswa&nim=<?= urlencode($mahasiswa['nim']) ?>" id="confirmHapus" class="btn btn-danger">Hapus</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
 
 
                         </td>
@@ -512,87 +611,6 @@ $role_user = $_SESSION['role_user'] ?? 'Tidak diketahui';
         </div>
     </div>
 
-    <!-- Modal Edit -->
-    <div class="modal fade modal-edit" id="modalEdit" tabindex="-1" aria-labelledby="modalEditLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalEditLabel">Edit Data Mahasiswa</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <form action="?action=editMahasiswa" method="POST">
-                        <div class="form-group">
-                            <label for="editNim">NIM</label>
-                            <input type="text" class="form-control" id="editNim" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="editNama">Nama Mahasiswa</label>
-                            <input type="text" class="form-control" id="editNama" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="editProdi">Prodi</label>
-                            <select class="form-control" id="editProdi" required>
-                                <option value="" disabled selected>Pilih Prodi</option>
-                                <option value="TI">D-IV Teknik Informatika</option>
-                                <option value="SI">D-IV Sistem Informasi Bisnis</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="editJurusan">Jurusan</label>
-                            <select class="form-control" id="editJurusan" required>
-                                <option value="" disabled selected>Pilih Jurusan</option>
-                                <option value="TI">Teknologi Informasi</option>
-                                <option value="ME">Teknik Elektro</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="editAngkatan">Angkatan</label>
-                            <select class="form-control" id="editAngkatan" required>
-                                <option value="" disabled selected>Pilih Angkatan</option>
-                                <option value="2022">2022</option>
-                                <option value="2023">2023</option>
-                                <option value="2024">2024</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="editKelas">Kelas</label>
-                            <input type="text" class="form-control" id="editKelas" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="editNo_Telp">No.Telepon</label>
-                            <input type="text" class="form-control" id="editNo_Telp" required>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-edit">Simpan Perubahan</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Hapus -->
-    <div class="modal fade modal-hapus" id="modalHapus" tabindex="-1" aria-labelledby="modalHapusLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalHapusLabel">Hapus Data Mahasiswa</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <p>Apakah Anda yakin ingin menghapus data mahasiswa ini?</p>
-                    <p><strong>NIM:</strong> <span id="hapusNim"></span></p>
-                    <p><strong>Nama:</strong> <span id="hapusNama"></span></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                    <a href="" id="confirmHapus" class="btn btn-danger">Hapus</a>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <div class="footer">
         ©2024 Jurusan Teknologi Informasi
@@ -614,30 +632,6 @@ $role_user = $_SESSION['role_user'] ?? 'Tidak diketahui';
                 footer.style.left = '0';
             }
         });
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            const modalHapus = document.getElementById('modalHapus');
-            const hapusNim = document.getElementById('hapusNim');
-            const hapusNama = document.getElementById('hapusNama');
-
-            // Event saat modal ditampilkan
-            $('#modalHapus').on('show.bs.modal', function(event) {
-                const button = event.relatedTarget; // Tombol yang memicu modal
-                const nim = button.getAttribute('data-nim'); // Ambil data-nim
-                const nama = button.getAttribute('data-nama'); // Ambil data-nama
-
-                // Tampilkan data di dalam modal
-                hapusNim.textContent = nim;
-                hapusNama.textContent = nama;
-            });
-
-            const confirmHapus = document.getElementById('confirmHapus');
-        $('#modalHapus').on('show.bs.modal', function(event) {
-            const nim = event.relatedTarget.getAttribute('data-nim');
-            confirmHapus.href = `index.php?controller=superAdmin&action=deleteMahasiswa&nim=${encodeURIComponent(nim)}`;
-        });
-        });
-
     </script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>

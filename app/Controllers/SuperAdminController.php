@@ -91,7 +91,7 @@ class SuperAdminController
             $id_prodi = $_POST['id_prodi'];
             $id_jurusan = $_POST['id_jurusan'];
             $id_angkatan = $_POST['id_angkatan'];
-            
+
             try {
                 $this->model->addMahasiswa($nim, $nama, $password, $no_telp, $email, $kelas, $id_prodi, $id_jurusan, $id_angkatan);
                 $_SESSION['status'] = 'success';
@@ -103,32 +103,69 @@ class SuperAdminController
             header("Location: index.php?controller=superAdmin&action=manageUser");
             exit;
         } else {
-            include __DIR__ . '/../../app/views/superadmin/addMahasiswa.php';
+            include __DIR__ . '/../../app/views/superadmin/manageUser.php';
         }
     }
-    
-    public function deleteMahasiswa()
+
+    // Fungsi untuk menghapus mahasiswa
+    public function deleteMahasiswa($nim)
+{
+    try {
+        // Mendapatkan id_user berdasarkan nim
+        $id_user = $this->model->getIdUserByNim($nim);
+
+        // Cek apakah id_user ditemukan
+        if ($id_user) {
+            // Menghapus data mahasiswa
+            $this->model->deleteMahasiswa($nim);
+
+            // Menghapus data user
+            $this->model->deleteUser($id_user);
+            
+            // Set status sukses ke session
+            $_SESSION['status'] = 'success';
+            $_SESSION['message'] = 'Mahasiswa berhasil dihapus!';
+        } else {
+            throw new Exception("Mahasiswa dengan NIM $nim tidak ditemukan.");
+        }
+    } catch (Exception $e) {
+        // Menangani jika ada kesalahan
+        $_SESSION['status'] = 'error';
+        $_SESSION['message'] = 'Terjadi kesalahan: ' . $e->getMessage();
+    }
+
+    // Redirect ke halaman manageUser setelah penghapusan
+    header("Location: index.php?controller=superAdmin&action=manageUser");
+    exit;
+}
+
+
+
+    public function editMahasiswa()
     {
-        if (isset($_GET['nim'])) {
-            $nim = $_GET['nim'];
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $nim = $_POST['nim'];
+            $password = $_POST['password'];
+            $nama = $_POST['nama'];
+            $no_telp = $_POST['no_telp'];
+            $email = $_POST['email'];
+            $kelas = $_POST['kelas'];
+            $id_prodi = $_POST['id_prodi'];
+            $id_jurusan = $_POST['id_jurusan'];
+            $id_angkatan = $_POST['id_angkatan'];
 
             try {
-                $this->model->deleteMahasiswa($nim);
+                // Memanggil model untuk memperbarui data mahasiswa
+                $this->model->updateMahasiswa($nim, $password, $nama, $no_telp, $email, $kelas, $id_prodi, $id_jurusan, $id_angkatan);
+
                 $_SESSION['status'] = 'success';
-                $_SESSION['message'] = 'Mahasiswa berhasil dihapus!';
+                $_SESSION['message'] = 'Mahasiswa berhasil diperbarui!';
+                header("Location: index.php?controller=superAdmin&action=manageUser");
             } catch (Exception $e) {
                 $_SESSION['status'] = 'error';
-                $_SESSION['message'] = 'Terjadi kesalahan saat menghapus mahasiswa: ' . $e->getMessage();
+                $_SESSION['message'] = 'Terjadi kesalahan saat memperbarui mahasiswa: ' . $e->getMessage();
+                header("Location: index.php?controller=superAdmin&action=manageUser");
             }
-
-            // Redirect ke halaman daftar mahasiswa
-            header("Location: index.php?controller=superAdmin&action=manageUser");
-            exit();
-        } else {
-            $_SESSION['status'] = 'error';
-            $_SESSION['message'] = 'NIM tidak ditemukan!';
-            header("Location: index.php?controller=superAdmin&action=manageUser");
-            exit();
         }
     }
 }

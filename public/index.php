@@ -10,36 +10,25 @@ switch ($controller) {
     case 'superAdmin':
         include_once __DIR__ . '/../app/controllers/SuperAdminController.php';
         $superAdminController = new SuperAdminController();
+
         if ($action === 'manageUser') {
             $superAdminController->manageUsers();
-        } 
-        // elseif ($action === 'ManageDocument') {
-        //     $superAdminController->ManageDocument();
-        // } 
-        elseif ($action === 'addMahasiswa') {
+        } elseif ($action === 'addMahasiswa') {
             $superAdminController->addMahasiswa();
-        } 
-        elseif ($action === 'deleteMahasiswa') {
-            $superAdminController->deleteMahasiswa();
-        }
-        
-        // elseif ($action === 'editMahasiswa') {
-        //     $id = isset($_GET['id']) ? $_GET['id'] : null;
-        //     $superAdminController->editMahasiswa($id);
-        // } elseif ($action === 'deleteMahasiswa') {
-        //     $id = isset($_GET['id']) ? $_GET['id'] : null;
-        //     $superAdminController->deleteMahasiswa($id);
-        // } 
-        else {
+        } elseif ($action === 'deleteMahasiswa') {
+            // Pastikan parameter 'nim' ada di URL
+            $nim = isset($_GET['nim']) ? $_GET['nim'] : null;
+            $superAdminController->deleteMahasiswa($nim);
+        } elseif ($action === 'editMahasiswa') {
+            $id = isset($_GET['id']) ? $_GET['id'] : null;
+            $superAdminController->editMahasiswa($id);
+        } else {
             $superAdminController->dashboard(); // Default action
         }
         break;
 
     default:
-        // include_once __DIR__ . '/app/controllers/HomeController.php';
-        // $homeController = new HomeController();
-        // $homeController->renderHome();
-
+        // Default controller
         include_once __DIR__ . '/../app/controllers/SuperAdminController.php';
         $superAdminController = new SuperAdminController();
         $superAdminController->dashboard(); // Default action
